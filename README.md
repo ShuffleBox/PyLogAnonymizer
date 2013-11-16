@@ -8,9 +8,9 @@ PyLogAnonymizer will be a utility to anonymize Apache log files.
 Usage
 ------
 You will need to pass two required command line arguments:
-     -i     input log file
-    -o    output log file
-    -s    secret key (aka your own salt) - optional
+    * -i     input log file
+    * -o    output log file
+    * -s    secret key (aka your own salt) - optional
 
 Other Stuff
 ----------
