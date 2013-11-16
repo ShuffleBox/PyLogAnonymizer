@@ -29,4 +29,4 @@ if you wish your output to be comparable with multiple sets generated from this 
 
 Example:
 
-192.168.1.150 could hash to `e1c8d6347c0c24e5cbc60e508f3fc1b5` one run and '2d89bb609f74f6df0be8578de2fe5184' the next, breaking some use cases such as analytics.
+192.168.1.150 could hash to `e1c8d6347c0c24e5cbc60e508f3fc1b5` one run and `2d89bb609f74f6df0be8578de2fe5184` the next, breaking some use cases such as analytics.
