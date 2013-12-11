@@ -43,8 +43,9 @@ import pdb
 
     
 def gen_random():
-    '''Generate random string 
-    '''
+    """
+    Generate random string 
+    """
     char_set = string.ascii_uppercase + string.ascii_lowercase + string.digits
     var_chars = random.sample(char_set, 24)
     
@@ -52,10 +53,11 @@ def gen_random():
 
 
 class LogFile(object):
-    '''
-    What do we want from our file class?
+    """
+    Job work order: Contains request for file to process and parameters for
+    doing that.
     Input, output, lines processed, lines not processed, line total
-    '''
+    """
     def __init__(self, **kwargs):   
         self.file_input = kwargs.get('input', '') 
         self.file_output = kwargs.get('output', '')
@@ -84,16 +86,10 @@ class LogFile(object):
     
     
     def check_files(self):
-        '''
+        """
         Check if input file exists and is in the right format
         Check if output file exists and ask how to handle
-        
-        
-        Probably will end up hating this implemntation.
-        think that there's no output class which is where writemode
-        would really belong. we can probably make good assumptions
-        to get the behavior to make sense off of just input file.
-        '''
+        """
         
         if os.path.exists(self.file_input):
             print ("Input file %s exists" % self.file_input)
@@ -120,39 +116,22 @@ class LogFile(object):
             self.write_mode = 'w'
 
 def hashomatic(string_val, hash_salt):
-    '''receives format string value & salt. returns hash
-    '''
-    #pdb.set_trace()
+    """
+    receives format string value & salt. returns hash
+    """
+    
     hash_string = hashlib.md5(string_val + hash_salt).hexdigest()
     
     return hash_string
 
-def hash_log_line(read_line, log_job):
-    parser = apachelog.parser(log_job.log_format)
-    try:
-        log_line = parser.parse(read_line)
-        anon_order.lines_accepted += 1
-    except apachelog.ApacheLogParserError:
-        anon_order.lines_rejected += 1
-        #pdb.set_trace()
-    hash_keys = ['%h', '%a', '%u', '%l']
-        #pdb.set_trace()   #check if value is a - and skip the hashing because it's not needed            
-    while hash_keys:
-        hash_key = hash_keys.pop()
-        if hash_key in log_line.keys():
-            if log_line[hash_key] == '-':
-                pass
-            else:
-                log_line[hash_key] = hashomatic(log_line[hash_key], anon_order.hash_salt)
-    return log_line          
-
 
 #Main
 def main():
-    '''Check files, setup log file object,
+    """
+    Check files, setup log file object,
     process line,
     assemble output file
-    '''
+    """
     anonymize_order = LogFile(**args)
     source_file = open(anonymize_order.file_input, 'r')
     destination_file = open(anonymize_order.file_output, anonymize_order.write_mode)
@@ -161,8 +140,7 @@ def main():
     read_line = 1
     while read_line:
         read_line = source_file.readline()
-        #pdb.set_trace()
-        #log_line = hash_log_line(read_line, anon_order)          
+          
         try:
             log_line = parser.parse(read_line)
             anonymize_order.line_accept()
@@ -170,7 +148,7 @@ def main():
             anonymize_order.line_reject()
         #pdb.set_trace()
         hash_keys = ['%h', '%a', '%u', '%l']
-        #pdb.set_trace()   #check if value is a - and skip the hashing because it's not needed            
+        #check if value is a - and skip the hashing because it's not needed            
         while hash_keys:
             hash_key = hash_keys.pop()
             if hash_key in log_line.keys():
@@ -179,15 +157,33 @@ def main():
                 else:
                     log_line[hash_key] = hashomatic(log_line[hash_key], anonymize_order.hash_salt)
 
-        #need to reorder the writeline back to the log format
+        #need to reorder the writeline in the original log format
+        #list of the format and prune extra chars for consistency with the apachlog object
         log_order = anonymize_order.log_format.split()
         log_order = [format_key.replace('\\', '') for format_key in log_order]
         log_order = [format_key.replace('"', '') for format_key in log_order]
+            #around here somewhere we need to add quotes to the fields that have them stripped
+            #request, referal, user agent
+            # %r , %{Referer}, %{User-Agent}
+        quote_check_list = ['%r', '%{Referer}i', '%{User-agent}i']
+        while quote_check_list:
+            quote_check = quote_check_list.pop()
+            if quote_check in log_line.keys():
+                if log_line[quote_check].startswith('"'):
+                    pass
+                else:
+                    log_line[quote_check] = '"' + log_line[quote_check]
+                
+                if log_line[quote_check].endswith('"'):
+                    pass
+                else:
+                    log_line[quote_check] = log_line[quote_check] + '"'
+            
+            
         write_line = []
         for format_key in log_order:
             write_line.append(log_line[format_key])
-
-            #pdb.set_trace()
+                    
         write_line.append('\n')
         write_line = ' '.join(write_line)
         destination_file.write(write_line)
