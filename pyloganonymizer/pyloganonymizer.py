@@ -79,7 +79,7 @@ class LogFile(object):
     def line_accept(self):
         self.lines_accepted += 1    
     
-    def line_regect(self):
+    def line_reject(self):
         self.lines_rejected += 1
     
     
@@ -165,9 +165,9 @@ def main():
         #log_line = hash_log_line(read_line, anon_order)          
         try:
             log_line = parser.parse(read_line)
-            anonymize_order.lines_accepted += 1
+            anonymize_order.line_accept()
         except apachelog.ApacheLogParserError:
-            anonymize_order.lines_rejected += 1
+            anonymize_order.line_reject()
         #pdb.set_trace()
         hash_keys = ['%h', '%a', '%u', '%l']
         #pdb.set_trace()   #check if value is a - and skip the hashing because it's not needed            
@@ -192,16 +192,7 @@ def main():
         write_line = ' '.join(write_line)
         destination_file.write(write_line)
     
-            #write_line = hashomatic(read_line, anon_order.log_format)
-            #print write_line
-            #parser = apachelog.parser(anon_order.log_format)
-            
-        
-            #open file
-            #read lines
-            #hashit
-            #assemble
-            #write file
+
     print 'Lines accepted: ' + str(anonymize_order.lines_accepted)
     print 'Lines rejected: ' + str(anonymize_order.lines_rejected)
     
