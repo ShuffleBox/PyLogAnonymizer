@@ -1,6 +1,7 @@
 #!/usr/bin/python
 """
 Log Anonymizer
+By Garret Rumohr
 
 TL;DR:
         Hashes IP, IDENT, and User fields in the
@@ -30,6 +31,9 @@ Thank you:
     - https://pypi.python.org/pypi/apachelog/
     
     Peter Hickman for Apache::LogEntry (Perl) so that Harry could port it to Python. :D
+    
+Todo:
+switch for output file overwrite/append behavior to allow automation in scripts.
 """
 import argparse
 import os.path
@@ -56,7 +60,7 @@ class LogFile(object):
     """
     Job work order: Contains request for file to process and parameters for
     doing that.
-    Input, output, lines processed, lines not processed, line total
+    Input, output, lines processed, lines not processed, line total <tbd>
     """
     def __init__(self, **kwargs):   
         self.file_input = kwargs.get('input', '') 
