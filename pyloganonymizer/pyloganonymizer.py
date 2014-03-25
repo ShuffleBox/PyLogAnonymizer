@@ -23,7 +23,7 @@ Disclaimer:
         be classified with all the other 'I'm doing this to learn Python"
         projects that exist on the web.
         That said, pointers for self-improvement are ALWAYS welcome.
-        Toss them my way at <email address TBD>
+        Toss them my way at contact@rumohr.me
         
 Thank you:
     Harry Fuecks for the Apache log heavy lifting.  Saving me from having to
